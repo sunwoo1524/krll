@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Krll - URL Shortener{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="input-container">
+        <input id="url" placeholder="Loooooooooooong URL" />
+        <button id="to-shorten-btn">Shorten</button>
+    </div>
+
+    <div class="result-container" id="result-container">
+        <p id="error">Your URL is invalid!</p>
+        <p id="short-url"></p>
+        <p id="copied">Copied!</p>
+        <img id="qr-code" />
+    </div>
+</main>
+
+<script src="{{ url_for('static', path='/script.js') }}"></script>
+{% endblock %}

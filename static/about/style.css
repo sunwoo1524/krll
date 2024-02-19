@@ -1,0 +1,12 @@
+main {
+    align-items: center;
+}
+
+section {
+    width: 90%;
+    max-width: 600px;
+}
+
+a {
+    text-decoration: none;
+}

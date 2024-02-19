@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', path='/root.css') }}">
+    {% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p>스팸이나 불법적인 용도로 사용하지 말아주세요.</p>
+        <p><a href="/about">About Krll</a> · <a href="mailto:maengkkong1524@naver.com">Contact</a></p>
+    </footer>
+</body>
+</html>

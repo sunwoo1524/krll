@@ -3,3 +3,4 @@ gunicorn
 sqlalchemy
 psycopg2
 python-dotenv
+jinja2

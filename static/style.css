@@ -1,9 +1,5 @@
 main {
-    padding-top: 100px;
-    display: flex;
-    flex-direction:column;
     align-items: center;
-    height: 500px;
 }
 
 .input-container {
@@ -70,21 +66,4 @@ main {
     margin-top: 10px;
     margin-bottom: 20px;
     font-size: 15px;
-}
-
-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-footer p {
-    margin: 3px 0;
-    font-size: 14px;
-    color: var(--footer-text-color);
-}
-
-footer p a {
-    color: var(--link-color);
-    text-decoration: none;
 }

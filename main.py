@@ -1,7 +1,8 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 
 from src.database import engine
 from src import models
@@ -11,6 +12,8 @@ from src.routes.url import url_route
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+templates = Jinja2Templates(directory="templates")
 
 origins = [
     "*",
@@ -24,10 +27,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(url_route.routes)
+app.mount("/static", StaticFiles(directory="./static"), name="static")
 
-# frontend v2
-app.mount("/static", StaticFiles(directory="./frontend/static"))
-@app.get("/")
-def frontend():
-    return FileResponse("./frontend/index.html")
+
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
+
+
+@app.get("/about", response_class=HTMLResponse)
+def about(request: Request):
+    return templates.TemplateResponse(request=request, name="about.html")
+
+
+app.include_router(url_route.routes)
