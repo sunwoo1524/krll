@@ -1,37 +1,22 @@
 const url_input = document.getElementById("url");
 const to_shorten_btn = document.getElementById("to-shorten-btn");
-const result_container = document.getElementById("result-container");
 const short_url = document.getElementById("short-url");
 const qr_code = document.getElementById("qr-code");
 const error_message = document.getElementById("error");
 const copy_message = document.getElementById("copied");
 
-to_shorten_btn.addEventListener("click", shorten);
-addEventListener("keydown", (event) => {if(event.key == "Enter") shorten;});
-
-short_url.addEventListener("click", event => {
-    // copy the short url to clipboard
-    navigator.clipboard.writeText(event.target.innerText)
-    .then(() => {
-        // show a message
-        copy_message.style.opacity = "1";
-        setTimeout(() => copy_message.style.opacity = "0", 3000);
-    })
-    .catch(error => {
-        alert("An error has occurred...\n" + error);
-    });
-});
-
 const shorten = async () => {
-    const original_url = url_input.value
+    const original_url = url_input.value;
+
     // check if the url input is empty
     if (original_url.length === 0) {
         return;
     }
 
-    // Easter egg: rick roll
-    if (rickroll.check(original_url)){
-        window.location.replace("https://youtu.be/dQw4w9WgXcQ");
+    const { dQw4w9WgXcQ } = await import("./dQw4w9WgXcQ.js");
+    if (dQw4w9WgXcQ.check(original_url)) {
+        location.href = "https://youtu.be/dQw4w9WgXcQ";
+        return;
     }
 
     // shorten the long url
@@ -52,7 +37,7 @@ const shorten = async () => {
             error_message.style.display = "block";
             setTimeout(() => error_message.style.display = "none", 5000);
         } else {
-            // there is some problems in the server!
+            // some error is occured in the server!
             alert("Sorry, an error has occured in the server...");
         }
         
@@ -70,31 +55,18 @@ const shorten = async () => {
     qr_code.alt = result;
 }
 
-const rickroll = {
-    check: (url)=>{
-	try {
-	    const urlObj = new URL(url);
-            let videoId = "";
-            if (urlObj.host.split(".").slice(-2)[0] === "youtube") {
-               if (urlObj.pathname.split("/")[1] === "watch") {
-                   videoId = urlObj.searchParams.get("v");
-               }
-               else {
-                   return false;
-               }
-            }
-	    else if (urlObj.host === "youtu.be") {
-                videoId = urlObj.pathname.slice(1);
-            }
-            else {
-	        return false
-            }
-	    if (videoId ==="dQw4w9WgXcQ") return true
-            return false
-	}
-        catch {
-            return false
-        }
-    }
-}
+to_shorten_btn.addEventListener("click", shorten);
+addEventListener("keydown", (event) => { if (event.key === "Enter") shorten() });
 
+short_url.addEventListener("click", event => {
+    // copy the short url to clipboard
+    navigator.clipboard.writeText(event.target.innerText)
+    .then(() => {
+        // show a message
+        copy_message.style.opacity = "1";
+        setTimeout(() => copy_message.style.opacity = "0", 3000);
+    })
+    .catch(error => {
+        alert("An error has occurred...\n" + error);
+    });
+});
