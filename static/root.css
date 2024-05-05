@@ -2,6 +2,7 @@
 
 * {
     font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
 }
 
 :root {
@@ -13,7 +14,7 @@
     --text-color: light-dark(black, white);
     --footer-text-color: light-dark(rgb(90, 90, 90), rgb(173, 173, 173));
     --button-text-color: white;
-    --link-color: light-dark(#2e2e2e, #7a7a7a);
+    --link-color: light-dark(#797979, #9e9e9e);
 
     --border-color: light-dark(lightgray, gray);
     --border-highlight-color: darkgray;
@@ -28,14 +29,68 @@ body {
     flex-direction: column;
     margin: 0;
     background-color: var(--background-color);
-    padding-top: 100px;
     box-sizing: border-box;
 }
 
-main {
+header ul {
+    padding: 10px;
+    margin: 0;
     display: flex;
-    flex-direction:column;
-    flex: 1 0 auto;
+    align-items: center;
+}
+
+header ul * {
+    margin: 0 5px;
+}
+
+header img {
+    width: 40px;
+    height: 40px;
+    margin-top: 5px;
+}
+
+header button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu {
+    display: none;
+    flex-direction: column;
+    font-size: 17px;
+    background-color: var(--input-background-color);
+    position: absolute;
+    margin-top: 5px;
+    margin-left: 5px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.show {
+    display: flex;
+}
+
+.menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    width: 100%;
+    padding: 20px;
+}
+
+.menu a:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* @media screen and (max-width: 1000px) {
+    .menu {
+        width: 100vw;
+        height: 100%;
+    }
+} */
+
+main {
+    height: 100%;
 }
 
 footer {

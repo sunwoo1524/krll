@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}About Krll{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', path='/rule/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <section>
+        {{ rule|safe }}
+    </section>
+</main>
+{% endblock %}

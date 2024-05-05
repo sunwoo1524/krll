@@ -1,5 +1,8 @@
 main {
     align-items: center;
+    padding-top: 100px;
+    display: flex;
+    flex-direction:column;
 }
 
 .input-container {

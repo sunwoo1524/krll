@@ -6,6 +6,7 @@ load_dotenv()
 
 NAME = os.environ.get("NAME")
 HOST = os.environ.get("HOST")
+CONTACT = os.environ.get("CONTACT")
 
 POSTGRES_DATABASE = os.environ.get("POSTGRES_DATABASE")
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
