@@ -45,7 +45,7 @@ const shorten = async () => {
     }
 
     const data = await response.json();
-    const result = `https://krll.me/${data.key}`
+    const result = `${host}/${data.key}`;
 
     // show the short url
     short_url.innerText = result;

@@ -8,6 +8,11 @@ from src.database import engine
 from src import models
 from src.routes.url import url_route
 
+from src.env import NAME, HOST
+
+
+DEFAULT_CONTEXT = { "name": NAME, "host": HOST }
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -32,12 +37,20 @@ app.mount("/static", StaticFiles(directory="./static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return templates.TemplateResponse(request=request, name="index.html")
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context=DEFAULT_CONTEXT
+    )
 
 
 @app.get("/about", response_class=HTMLResponse)
 def about(request: Request):
-    return templates.TemplateResponse(request=request, name="about.html")
+    return templates.TemplateResponse(
+        request=request,
+        name="about.html",
+        context=DEFAULT_CONTEXT
+    )
 
 
 app.include_router(url_route.routes)
