@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 
-load_dotenv()
+load_dotenv(override=True)
 
 NAME = os.environ.get("NAME")
 HOST = os.environ.get("HOST")
