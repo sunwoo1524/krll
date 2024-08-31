@@ -58,13 +58,13 @@ header button {
 .menu {
     display: none;
     flex-direction: column;
-    font-size: 17px;
+    font-size: 15px;
     background-color: var(--input-background-color);
     position: absolute;
-    margin-top: 5px;
-    margin-left: 5px;
+    margin-top: 10px;
+    margin-left: 10px;
     border-radius: 5px;
-    width: 200px;
+    width: 100px;
 }
 
 .show {
@@ -75,7 +75,7 @@ header button {
     text-decoration: none;
     color: var(--text-color);
     width: 100%;
-    padding: 20px;
+    padding: 15px;
 }
 
 .menu a:hover {
