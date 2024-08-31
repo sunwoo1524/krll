@@ -7,6 +7,7 @@ main {
 section {
     width: 90%;
     max-width: 600px;
+    margin-bottom: 60px;
 }
 
 a {
