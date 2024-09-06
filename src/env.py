@@ -7,6 +7,7 @@ load_dotenv(override=True)
 NAME = os.environ.get("NAME")
 HOST = os.environ.get("HOST")
 CONTACT = os.environ.get("CONTACT")
+NTFY = os.environ.get("NTFY")
 
 POSTGRES_DATABASE = os.environ.get("POSTGRES_DATABASE")
 POSTGRES_USER = os.environ.get("POSTGRES_USER")

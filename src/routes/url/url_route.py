@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from urllib.parse import urlparse
-import random, string
+import random, string, requests
 
 from ...database import get_db
 from .url_schemas import URL, ShortenURLRes
 from .url_crud import storeKeyOfURL, getOriginalURL, getKeyOfURL
+from ...env import HOST, NTFY
 
 
 routes = APIRouter(
@@ -34,6 +35,9 @@ def shortenURL(url: URL, db: Session = Depends(get_db)) -> ShortenURLRes:
         letters += "".join(str(i) for i in range(1, 10))
         key = "".join(random.choice(letters) for i in range(6))
         storeKeyOfURL(db, url.url, key)
+
+        # send notification to ntfy
+        requests.post(NTFY, data=f"New short URL: {HOST}/{key}\nOriginal: {url.url}".encode(encoding='utf-8'))
     else:
         key = db_key.key
 
