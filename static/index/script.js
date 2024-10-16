@@ -70,3 +70,7 @@ short_url.addEventListener("click", event => {
         alert("An error has occurred...\n" + error);
     });
 });
+
+url_input.addEventListener("load", () => {
+    url_input.focus()
+})
