@@ -1,7 +1,7 @@
 fastapi[all]
 gunicorn
 sqlalchemy
-psycopg
+psycopg2
 python-dotenv
 jinja2
 requests
