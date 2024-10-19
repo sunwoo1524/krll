@@ -5,6 +5,8 @@ const qr_code = document.getElementById("qr-code");
 const error_message = document.getElementById("error");
 const copy_message = document.getElementById("copied");
 
+let qrcodejs;
+
 const shorten = async () => {
     const original_url = url_input.value;
 
@@ -51,15 +53,19 @@ const shorten = async () => {
     short_url.innerText = result;
 
     // get the qr code of the short url and show it
-    let qrcode = new QRCode(qr_code, {
-        text: result,
-        width: 256,
-        height: 256,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-    qr_code.className += "generated";
+    if (qrcodejs) {
+        qrcodejs.clear();
+        qrcodejs.makeCode(result);
+    } else {
+        qrcodejs = new QRCode(qr_code, {
+            text: result,
+            width: 256,
+            height: 256,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+        });
+        qr_code.className += "generated";
+    }
     
     // qr_code.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${result}`;
     // qr_code.alt = result;
