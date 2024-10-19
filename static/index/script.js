@@ -51,8 +51,18 @@ const shorten = async () => {
     short_url.innerText = result;
 
     // get the qr code of the short url and show it
-    qr_code.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${result}`;
-    qr_code.alt = result;
+    let qrcode = new QRCode(qr_code, {
+        text: result,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    qr_code.className += "generated";
+    
+    // qr_code.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${result}`;
+    // qr_code.alt = result;
 }
 
 to_shorten_btn.addEventListener("click", shorten);

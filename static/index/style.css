@@ -70,3 +70,8 @@ main {
     margin-bottom: 20px;
     font-size: 15px;
 }
+
+.result-container #qr-code.generated {
+    background-color: white;
+    padding: 5px;
+}
