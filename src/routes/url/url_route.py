@@ -24,6 +24,10 @@ def shortenURL(url: URL, db: Session = Depends(get_db)) -> ShortenURLRes:
             raise HTTPException(status_code=400, detail="INVALID_URL")
     except ValueError:
         raise HTTPException(status_code=400, detail="INVALID_URL")
+    
+    # check length of url
+    if len(url.url) > 10000:
+        raise HTTPException(status_code=400, detail="URL_MAX_LENGTH_EXCEEDED")
 
     # get the URL of key from database
     # if it is not found, generate a new key
