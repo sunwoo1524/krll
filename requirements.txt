@@ -1,7 +1,7 @@
-fastapi[all]
-gunicorn
-sqlalchemy
-psycopg2
-python-dotenv
-jinja2
-requests
+fastapi[all]~=0.115.2
+gunicorn~=23.0.0
+sqlalchemy~=2.0.36
+psycopg2~=2.9.9
+python-dotenv~=1.0.1
+jinja2~=3.1.4
+requests~=2.32.3
