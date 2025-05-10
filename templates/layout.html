@@ -16,15 +16,8 @@
 <body>
     <header>
         <ul>
-            <button class="menu-btn" id="menu-btn"><span class="menu-btn material-symbols-outlined">menu</span></button>
             <a href="/"><img src="{{ url_for('static', path='/images/logo.png') }}" alt="Krll Logo"></a>
         </ul>
-
-        <div class="menu" id="menu">
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/rule">Rule</a>
-        </div>
     </header>
 
     {% block content %}{% endblock %}
@@ -32,7 +25,5 @@
     <footer>
         <p><a href="/rule">Rule</a> · <a href="/about">About Krll</a> · <a href="{{ contact }}">Contact</a> · <a href="https://github.com/sunwoo1524/krll">GitHub Repository</a></p>
     </footer>
-
-    <script src="{{ url_for('static', path='/menu.js') }}"></script>
 </body>
 </html>
