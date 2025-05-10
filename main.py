@@ -27,7 +27,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 origins = [
-    "*",
+    "http://127.0.0.1:8000",
+    HOST
 ]
 
 app.add_middleware(
