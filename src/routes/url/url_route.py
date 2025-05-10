@@ -41,7 +41,7 @@ def shortenURL(url: URL, db: Session = Depends(get_db)) -> ShortenURLRes:
         storeKeyOfURL(db, url.url, key)
 
         # send notification to ntfy
-        requests.post(NTFY, data=f"New short URL was created.\nWebsite: {result.netloc}".encode(encoding='utf-8'))
+        if not NTFY is None: requests.post(NTFY, data=f"New short URL was created.\nWebsite: {result.netloc}".encode(encoding='utf-8'))
     else:
         key = db_key.key
 
