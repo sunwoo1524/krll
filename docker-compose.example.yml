@@ -6,6 +6,8 @@ services:
       - ./.env
     volumes:
       - ./postgres:/var/lib/postgresql/data
+      - ./.env:/app/.env
+      - ./rule.html:/app/rule.html
   
   web:
     build: .
