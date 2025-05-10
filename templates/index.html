@@ -7,6 +7,9 @@
 
 <!-- QRCode.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {% endblock %}
 
 {% block content %}
@@ -15,6 +18,13 @@
         <input id="url" placeholder="Loooooooooooong URL" autofocus />
         <button id="to-shorten-btn">Shorten</button>
     </div>
+
+    <!-- Cloudflare Turnstile widget -->
+    <div
+        id="captcha"
+        class="cf-turnstile"
+        data-sitekey="{{ cfts_site_key }}"
+        data-callback=""></div>
 
     <div class="result-container" id="result-container">
         <p id="error">Your URL is invalid!</p>

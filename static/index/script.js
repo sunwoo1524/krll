@@ -8,6 +8,13 @@ const copy_message = document.getElementById("copied");
 let qrcodejs;
 
 const shorten = async () => {
+    // check captcha
+    const cfts_res = turnstile.getResponse();
+    if (!cfts_res || turnstile.isExpired()) {
+        turnstile.reset();
+        return;
+    }
+
     const original_url = url_input.value;
 
     // check if the url input is empty
@@ -28,7 +35,8 @@ const shorten = async () => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            url: original_url
+            url: original_url,
+            token: cfts_res
         })
     })
 

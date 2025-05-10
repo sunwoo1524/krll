@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from urllib.parse import urlparse
 import random, string, requests
 
 from ...database import get_db
-from .url_schemas import URL, ShortenURLRes
+from .url_schemas import URLItem, ShortenRes
 from .url_crud import storeKeyOfURL, getOriginalURL, getKeyOfURL
-from ...env import HOST, NTFY
+from ...env import HOST, NTFY, CFTS_SECRET_KEY
 
 
 routes = APIRouter(
@@ -16,38 +16,55 @@ routes = APIRouter(
 
 
 @routes.post("/api/urls")
-def shortenURL(url: URL, db: Session = Depends(get_db)) -> ShortenURLRes:
+def shortenURL(item: URLItem, request: Request, db: Session = Depends(get_db)) -> ShortenRes:
+    # check captcha
+    try:
+        captcha_res = requests.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            {
+                "secret": CFTS_SECRET_KEY,
+                "response": item.token,
+                "remoteip": request.client.host
+            }
+        )
+        captcha_outcome = captcha_res.json()
+        if not captcha_outcome["success"]:
+            raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
+    except:
+        raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
+
+
     # check the URL is valid
     try:
-        result = urlparse(url.url)
+        result = urlparse(item.url)
         if not all([result.scheme, result.netloc]):
             raise HTTPException(status_code=400, detail="INVALID_URL")
     except ValueError:
         raise HTTPException(status_code=400, detail="INVALID_URL")
     
     # check length of url
-    if len(url.url) > 10000:
+    if len(item.url) > 10000:
         raise HTTPException(status_code=400, detail="URL_MAX_LENGTH_EXCEEDED")
 
     # get the URL of key from database
     # if it is not found, generate a new key
     # short url: https://host/key
-    db_key = getKeyOfURL(db, url=url.url)
+    db_key = getKeyOfURL(db, url=item.url)
     key = None
     if db_key is None:
         letters = string.ascii_letters
         letters += "".join(str(i) for i in range(1, 10))
         key = "".join(random.choice(letters) for i in range(6))
-        storeKeyOfURL(db, url.url, key)
+        storeKeyOfURL(db, item.url, key)
 
         # send notification to ntfy
         if not NTFY is None: requests.post(NTFY, data=f"New short URL was created.\nWebsite: {result.netloc}".encode(encoding='utf-8'))
     else:
         key = db_key.key
 
-    res = ShortenURLRes(
+    res = ShortenRes(
         key=key,
-        original_url=url.url
+        original_url=item.url
     )
     return res
 

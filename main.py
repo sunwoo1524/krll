@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from src.database import engine
 from src import models
 from src.routes.url import url_route
-from src.env import NAME, HOST, CONTACT
+from src.env import NAME, HOST, CONTACT, CFTS_SITE_KEY, CFTS_SECRET_KEY
 
 import os
 
@@ -47,7 +47,7 @@ def index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context=DEFAULT_CONTEXT
+        context=DEFAULT_CONTEXT | { "cfts_site_key": CFTS_SITE_KEY, "cfts_secret_key": CFTS_SECRET_KEY }
     )
 
 

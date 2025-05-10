@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
 
-class URL(BaseModel):
+class URLItem(BaseModel):
     url: str
+    token: str
 
 
-class ShortenURLRes(BaseModel):
+class ShortenRes(BaseModel):
     key: str
     original_url: str
