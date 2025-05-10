@@ -82,15 +82,8 @@ header button {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-/* @media screen and (max-width: 1000px) {
-    .menu {
-        width: 100vw;
-        height: 100%;
-    }
-} */
-
 main {
-    height: 100%;
+    flex-grow: 1;
 }
 
 footer {
