@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from src.database import engine
 from src import models
 from src.routes.url import url_route
+from src.routes.admin import admin_route
 from src.env import NAME, HOST, CONTACT, CFTS_SITE_KEY, CFTS_SECRET_KEY
 
 import os
@@ -68,5 +69,15 @@ def about(request: Request):
         context=DEFAULT_CONTEXT
     )
 
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_dashboard(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="admin-dashboard.html"
+    )
+
+
+app.include_router(admin_route.routes)
 
 app.include_router(url_route.routes)

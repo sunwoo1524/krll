@@ -6,7 +6,7 @@ import random, string, requests
 
 from ...database import get_db
 from .url_schemas import URLItem, ShortenRes
-from .url_crud import storeKeyOfURL, getOriginalURL, getKeyOfURL
+from .url_crud import storeKeyOfURL, getOriginalURL, getKeyOfURL, filter_url
 from ...env import HOST, NTFY, CFTS_SECRET_KEY
 
 
@@ -45,6 +45,11 @@ def shortenURL(item: URLItem, request: Request, db: Session = Depends(get_db)) -
     # check length of url
     if len(item.url) > 10000:
         raise HTTPException(status_code=400, detail="URL_MAX_LENGTH_EXCEEDED")
+
+    # check if url matches filter
+    filter_result = filter_url(db, item.url)
+    if len(filter_result) > 0:
+        raise HTTPException(status_code=400, detail="BLOCKED_URL")
 
     # get the URL of key from database
     # if it is not found, generate a new key

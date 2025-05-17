@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func, literal
 
-from ...models import URL
+from ...models import URL, URLFilter
 
 
 def storeKeyOfURL(db: Session, url: str, key: str):
@@ -22,3 +23,8 @@ def getOriginalURL(db: Session, key: str):
 def getKeyOfURL(db: Session, url: str):
     key = db.query(URL).filter(URL.original_url == url).first()
     return key
+
+
+def filter_url(db: Session, url: str):
+    result = db.query(URLFilter).filter(literal(url).like(func.concat("%", URLFilter.filter, "%"))).all()
+    return result

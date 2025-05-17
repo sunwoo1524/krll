@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krll Admin Dashboard</title>
+</head>
+<body>
+    <div class="signin">
+        <table>
+            <tbody>
+                <tr>
+                    <td><input id="username" placeholder="Admin's username"></td>
+                </tr>
+                <tr>
+                    <td><input type="password" id="password" placeholder="Password"></td>
+                </tr>
+                <tr>
+                    <td><button type="submit" onclick="signin()">Sign in</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <script>
+            const username_input = document.querySelector("#username")
+            const password_input = document.querySelector("#password")
+            let access_token
+
+            async function signin() {
+                const token_res = await fetch("/api/admin/token",{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        grant_type: "password",
+                        username: username_input.value,
+                        password: password_input.value,
+                    })
+                })
+                const token_out = await token_res.json()
+                if (token_res.ok) {
+                    access_token = token_out.access_token
+                    document.querySelector(".signin").style.display = "none"
+                    document.querySelector("main").style.display = "block"
+                    await initDashboard()
+                } else {
+                    alert(token_out.detail)
+                }
+            }
+        </script>
+    </div>
+    <main style="display: none">
+        <h1>Admin Dashboard</h1>
+        
+        <div class="url-setting">
+            <h3>URL setting</h3>
+            <button onclick="refreshURLList()">Refresh</button>
+            <table id="url-list">
+            </table>
+            <div>
+                <button onclick="prevURLList()">Prev</button>
+                <button onclick="nextURLList()">Next</button>
+            </div>
+        </div>
+        
+        <div class="filter-setting">
+            <h3>Filter setting</h3>
+            <div class="add-filter">
+                <input id="filter-to-add" placeholder="spam-website.com">
+                <button onclick="addNewFilter()">Add new filter</button>
+            </div>
+            <table id="filter-list"></table>
+            <div>
+                <button onclick="prevURLList()">Prev</button>
+                <button onclick="nextURLList()">Next</button>
+            </div>
+        </div>
+    </main>
+</body>
+<script src="{{ url_for('static', path='admin-dashboard/script.js') }}"></script>
+</html>
