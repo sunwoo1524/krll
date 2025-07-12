@@ -16,5 +16,17 @@ POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
 
-CFTS_SITE_KEY = os.environ.get("CF_TURNSTILE_SITE_KEY")
-CFTS_SECRET_KEY = os.environ.get("CF_TURNSTILE_SECRET_KEY")
+CAPTCHA_MODE = os.environ.get("CAPTCHA_MODE")
+
+site_key = None
+secret_key = None
+cap_instance = None
+
+if not CAPTCHA_MODE is None:
+    if CAPTCHA_MODE == "turnstile":
+        site_key = os.environ.get("CF_TURNSTILE_SITE_KEY")
+        secret_key = os.environ.get("CF_TURNSTILE_SECRET_KEY")
+    elif CAPTCHA_MODE == "cap":
+        site_key = os.environ.get("CAP_SITE_KEY")
+        secret_key = os.environ.get("CAP_SECRET_KEY")
+        cap_instance = os.environ.get("CAP_INSTANCE")

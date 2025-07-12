@@ -8,7 +8,7 @@ from src.database import engine
 from src import models
 from src.routes.url import url_route
 from src.routes.admin import admin_route
-from src.env import NAME, HOST, CONTACT, CFTS_SITE_KEY, CFTS_SECRET_KEY
+from src.env import NAME, HOST, CONTACT, site_key, secret_key, CAPTCHA_MODE, cap_instance
 
 import os
 
@@ -48,7 +48,7 @@ def index(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context=DEFAULT_CONTEXT | { "cfts_site_key": CFTS_SITE_KEY, "cfts_secret_key": CFTS_SECRET_KEY }
+        context=DEFAULT_CONTEXT | { "captcha_mode": CAPTCHA_MODE, "captcha_site_key": site_key, "captcha_secret_key": secret_key, "cap_instance": cap_instance }
     )
 
 

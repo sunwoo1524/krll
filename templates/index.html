@@ -8,8 +8,12 @@
 <!-- QRCode.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+{% if captcha_mode == "turnstile" %}
 <!-- Cloudflare Turnstile -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% elif captcha_mode == "cap" %}
+<script src="https://cdn.jsdelivr.net/npm/@cap.js/widget@0.1.25"></script>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -19,15 +23,22 @@
         <button id="to-shorten-btn">Shorten</button>
     </div>
 
+    {% if captcha_mode == "turnstile" %}
     <!-- Cloudflare Turnstile widget -->
     <div
         id="captcha"
         class="cf-turnstile"
-        data-sitekey="{{ cfts_site_key }}"
+        data-sitekey="{{ captcha_site_key }}"
         data-callback=""></div>
+    {% elif captcha_mode == "cap" %}
+    <cap-widget
+        id="cap" data-cap-api-endpoint="{{ cap_instance }}/{{ captcha_site_key }}/"
+    ></cap-widget>
+    {% endif %}
+    
 
     <div class="result-container" id="result-container">
-        <p id="error">Your URL is invalid!</p>
+        <p id="error">-</p>
         <p id="short-url"></p>
         <p id="copied">Copied!</p>
         <div id="qr-code"></div>
@@ -36,6 +47,7 @@
 
 <script>
     const host = "{{ host }}";
+    const captcha_mode = "{{ captcha_mode }}";
 </script>
 
 <script src="{{ url_for('static', path='/index/script.js') }}"></script>

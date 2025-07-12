@@ -7,7 +7,7 @@ import random, string, requests
 from ...database import get_db
 from .url_schemas import URLItem, ShortenRes
 from .url_crud import storeKeyOfURL, getOriginalURL, getKeyOfURL, filter_url
-from ...env import HOST, NTFY, CFTS_SECRET_KEY
+from ...env import HOST, NTFY, secret_key, CAPTCHA_MODE, site_key, cap_instance
 
 
 routes = APIRouter(
@@ -18,21 +18,35 @@ routes = APIRouter(
 @routes.post("/api/urls")
 def shortenURL(item: URLItem, request: Request, db: Session = Depends(get_db)) -> ShortenRes:
     # check captcha
-    try:
-        captcha_res = requests.post(
-            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-            {
-                "secret": CFTS_SECRET_KEY,
-                "response": item.token,
-                "remoteip": request.client.host
-            }
-        )
-        captcha_outcome = captcha_res.json()
-        if not captcha_outcome["success"]:
+    if CAPTCHA_MODE:
+        try:
+            captcha_res = requests.post(
+                "https://challenges.cloudflare.com/turnstile/v0/siteverify" if CAPTCHA_MODE == "turnstile" else f"{cap_instance}/{site_key}/siteverify",
+                {
+                    "secret": secret_key,
+                    "response": item.token,
+                    "remoteip": request.client.host if CAPTCHA_MODE == "turnstile" else None
+                }
+            )
+            captcha_outcome = captcha_res.json()
+            if not captcha_outcome["success"]:
+                raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
+        except:
             raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
-    except:
-        raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
-
+    # elif CAPTCHA_MODE == "cap":
+    #     try:
+    #         captcha_res = requests.post(
+    #             f"{CAP_INSTANCE}/{SITE_KEY}/siteverify",
+    #             {
+    #                 "secret": SECRET_KEY,
+    #                 "response": item.token
+    #             }
+    #         )
+    #         captcha_outcome = captcha_res.json()
+    #         if not captcha_outcome["success"]:
+    #             raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
+    #     except:
+    #         raise HTTPException(status_code=400, detail="FAILURE_CAPTCHA")
 
     # check the URL is valid
     try:

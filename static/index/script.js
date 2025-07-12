@@ -4,17 +4,33 @@ const short_url = document.getElementById("short-url");
 const qr_code = document.getElementById("qr-code");
 const error_message = document.getElementById("error");
 const copy_message = document.getElementById("copied");
+const cap_widget = document.querySelector("#cap");
+
+const error_message_list = {
+    "FAILURE_CAPTCHA": "The captcha failed.",
+    "INVALID_URL": "The link is invalid.",
+    "URL_MAX_LENGTH_EXCEEDED": "The link is too long.",
+    "BLOCKED_URL": "The link has been blocked."
+}
+
+if (cap_widget !== null) cap_widget.addEventListener("solve", function (e) {
+    cap_token = e.detail.token;
+});
 
 let qrcodejs;
+let cfts_token = null;
+let cap_token = null;
 
 const shorten = async () => {
-    // check captcha
-    const cfts_res = turnstile.getResponse();
-    if (!cfts_res || turnstile.isExpired()) {
-        turnstile.reset();
-        return;
+    // check cloudflare captcha
+    if (captcha_mode === "turnstile") {
+        cfts_token = turnstile.getResponse();
+        if (!cfts_token || turnstile.isExpired()) {
+            turnstile.reset();
+            return;
+        }
     }
-
+    
     const original_url = url_input.value;
 
     // check if the url input is empty
@@ -36,14 +52,21 @@ const shorten = async () => {
         },
         body: JSON.stringify({
             url: original_url,
-            token: cfts_res
+            token: cfts_token || cap_token
         })
     })
 
     // check if there is problems
     if (!response.ok) {
         if (response.status === 400) {
+            const detail = (await response.json()).detail;
+            if (detail == "FAILURE_CAPTCHA") {
+                if (captcha_mode === "turnstile") {
+                    turnstile.reset();
+                }
+            }
             // the url is invalid
+            error_message.innerText = error_message_list[detail] || detail;
             error_message.style.display = "block";
             setTimeout(() => error_message.style.display = "none", 5000);
         } else {
