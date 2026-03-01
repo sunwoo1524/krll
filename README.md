@@ -31,6 +31,6 @@ docker exec -it krll-web-1 python main.py create_admin
 
 # without docker compose
 source ./venv/bin/activate/ # ./venv/Scripts/activate
-python 
+python main.py create_admin
 ```
 Go to `https://<your krll instance address>/admin` to use the admin dashboard.
