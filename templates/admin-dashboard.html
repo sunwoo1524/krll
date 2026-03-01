@@ -23,34 +23,48 @@
         <script>
             const username_input = document.querySelector("#username")
             const password_input = document.querySelector("#password")
-            let access_token
 
             async function signin() {
-                const token_res = await fetch("/api/admin/token",{
+                const login_res = await fetch("/api/admin/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     body: new URLSearchParams({
-                        grant_type: "password",
                         username: username_input.value,
                         password: password_input.value,
-                    })
+                    }),
+                    credentials: "same-origin"
                 })
-                const token_out = await token_res.json()
-                if (token_res.ok) {
-                    access_token = token_out.access_token
-                    document.querySelector(".signin").style.display = "none"
-                    document.querySelector("main").style.display = "block"
-                    await initDashboard()
+                const login_out = await login_res.json()
+                if (login_res.ok) {
+                    showDashboard()
                 } else {
-                    alert(token_out.detail)
+                    alert(login_out.detail)
                 }
             }
+
+            async function restoreSession() {
+                const verify_res = await fetch("/api/admin/me", {
+                    credentials: "same-origin"
+                })
+                if (verify_res.ok) {
+                    showDashboard()
+                }
+            }
+
+            function showDashboard() {
+                document.querySelector(".signin").style.display = "none"
+                document.querySelector("main").style.display = "block"
+                initDashboard()
+            }
+
+            restoreSession()
         </script>
     </div>
     <main style="display: none">
         <h1>Admin Dashboard</h1>
+        <button onclick="logout()">Logout</button>
         
         <div class="url-setting">
             <h3>URL setting</h3>
@@ -71,8 +85,8 @@
             </div>
             <table id="filter-list"></table>
             <div>
-                <button onclick="prevURLList()">Prev</button>
-                <button onclick="nextURLList()">Next</button>
+                <button onclick="prevFilterList()">Prev</button>
+                <button onclick="nextFilterList()">Next</button>
             </div>
         </div>
     </main>

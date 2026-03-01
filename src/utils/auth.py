@@ -1,12 +1,13 @@
-# from passlib.context import CryptContext
 import bcrypt
-from datetime import datetime, timedelta, timezone
-import jwt
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from ..env import JWT_SECRET_KEY
 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SESSION_COOKIE_NAME = "admin_session"
+SESSION_MAX_AGE = 60 * 60 * 24 * 30  # 30 days in seconds
+SESSION_RENEW_BEFORE = SESSION_MAX_AGE // 2  # renew when less than 15 days remain
+
+_serializer = URLSafeTimedSerializer(JWT_SECRET_KEY, salt="admin-session")
 
 
 def verify_password(plain_password, hashed_password):
@@ -23,12 +24,21 @@ def get_password_hash(password):
     )
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+def create_session_token(admin_id: str) -> str:
+    """Sign admin_id into a tamper-proof session token."""
+    return _serializer.dumps(admin_id)
+
+
+def verify_session_token(token: str) -> tuple[str, int] | None:
+    """Return (admin_id, issued_at) if the token is valid and not expired, else None.
+
+    issued_at is a Unix timestamp (seconds) indicating when the token was created.
+    """
+    try:
+        # return_timestamp=True makes loads() return (payload, datetime) pair
+        admin_id, issued_dt = _serializer.loads(
+            token, max_age=SESSION_MAX_AGE, return_timestamp=True
+        )
+        return admin_id, int(issued_dt.timestamp())
+    except (BadSignature, SignatureExpired):
+        return None

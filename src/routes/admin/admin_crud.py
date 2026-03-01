@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 import uuid
 
-from .admin_schemas import Admin, AdminInDB
+from .admin_schemas import Admin
 from ...models import URL, Admin, URLFilter
 from ...utils.auth import get_password_hash
 

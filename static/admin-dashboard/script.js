@@ -11,10 +11,13 @@ let url_current_page = 0
  * @returns {undefined | bool}
  */
 async function renderURLList(start, limit) {
-    const url_res = await fetch(`/api/admin/urls?start=${start}&limit=${limit}`, { headers: { "Authorization": `Bearer ${access_token}` }})
+    const url_res = await fetch(`/api/admin/urls?start=${start}&limit=${limit}`, {
+        credentials: "same-origin"
+    })
     const url_out = await url_res.json()
     if (!url_res.ok) {
         alert(url_out.detail)
+        return true
     }
     if (url_out.length === 0) {
         return true
@@ -28,9 +31,14 @@ async function renderURLList(start, limit) {
         const created_at = document.createElement("td")
         const delete_btn_cell = document.createElement("td")
         const delete_btn = document.createElement("button")
-        key.innerHTML = element.key
-        original_url.innerHTML = "<a href='" + element.original_url + "'>" + (element.original_url.length > 60 ? element.original_url.substring(0, 60) + "..." : element.original_url) + "</a>"
-        created_at.innerHTML = new Date(element.created_at)
+        const link = document.createElement("a")
+        key.textContent = element.key
+        link.href = element.original_url
+        link.textContent = element.original_url.length > 60
+            ? element.original_url.substring(0, 60) + "..."
+            : element.original_url
+        original_url.appendChild(link)
+        created_at.textContent = new Date(element.created_at)
         delete_btn.innerText = "Delete"
         delete_btn.dataset.key = element.key
         delete_btn.onclick = event => deleteShortenURL(event.target.dataset.key)
@@ -66,11 +74,15 @@ async function refreshURLList() {
  * @param {string} key 
  */
 async function deleteShortenURL(key) {
-    const delete_res = await fetch(`/api/admin/urls?key=${key}`, { method: "DELETE", headers: { "Authorization": `Bearer ${access_token}` } })
+    const delete_res = await fetch(`/api/admin/urls?key=${key}`, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
     if (delete_res.ok) {
         await renderURLList(url_current_page, url_list_limit)
     } else {
-        alert(delete_res.json().detail)
+        const err = await delete_res.json()
+        alert(err.detail)
     }
 }
 
@@ -84,10 +96,13 @@ let filter_current_page = 0
  * @returns {undefined | bool}
  */
 async function renderFilterList(start, limit) {
-    const filter_res = await fetch(`/api/admin/filters?start=${start}&limit=${limit}`, { headers: { "Authorization": `Bearer ${access_token}` }})
+    const filter_res = await fetch(`/api/admin/filters?start=${start}&limit=${limit}`, {
+        credentials: "same-origin"
+    })
     const filter_out = await filter_res.json()
     if (!filter_res.ok) {
         alert(filter_out.detail)
+        return true
     }
     if (filter_out.length === 0) {
         return true
@@ -100,8 +115,8 @@ async function renderFilterList(start, limit) {
         const created_at = document.createElement("td")
         const delete_btn_cell = document.createElement("td")
         const delete_btn = document.createElement("button")
-        filter.innerHTML = element.filter
-        created_at.innerHTML = new Date(element.created_at)
+        filter.textContent = element.filter
+        created_at.textContent = new Date(element.created_at)
         delete_btn.innerText = "Delete"
         delete_btn.dataset.id = element.id
         delete_btn.onclick = event => deleteFilter(event.target.dataset.id)
@@ -116,13 +131,13 @@ async function renderFilterList(start, limit) {
 async function prevFilterList() {
     if (filter_current_page > 0) {
         filter_current_page -= filter_list_limit
-        await renderURLList(filter_current_page, filter_list_limit)
+        await renderFilterList(filter_current_page, filter_list_limit)
     }
 }
 
 async function nextFilterList() {
     filter_current_page += filter_list_limit
-    if (await renderURLList(filter_current_page, filter_list_limit)) {
+    if (await renderFilterList(filter_current_page, filter_list_limit)) {
         filter_current_page -= filter_list_limit
     }
 }
@@ -131,12 +146,12 @@ async function addNewFilter() {
     const add_filter_res = await fetch("/api/admin/filters", {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${access_token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
             url_filter: document.querySelector("#filter-to-add").value
-        })
+        }),
+        credentials: "same-origin"
     })
     const outcome = await add_filter_res.json()
     if (!add_filter_res.ok) {
@@ -150,12 +165,24 @@ async function addNewFilter() {
  * @param {string} id
  */
 async function deleteFilter(id) {
-    const delete_res = await fetch(`/api/admin/filters?id=${id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${access_token}` } })
+    const delete_res = await fetch(`/api/admin/filters?id=${id}`, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
     if (delete_res.ok) {
         await renderFilterList(filter_current_page, filter_list_limit)
     } else {
-        alert(delete_res.json().detail)
+        const err = await delete_res.json()
+        alert(err.detail)
     }
+}
+
+async function logout() {
+    await fetch("/api/admin/logout", {
+        method: "POST",
+        credentials: "same-origin"
+    })
+    location.reload()
 }
 
 async function initDashboard() {
